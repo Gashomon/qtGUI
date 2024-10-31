@@ -17,7 +17,7 @@ class MainUI(QMainWindow, mainUi):
         self.pushButton.clicked.connect(self.gocmd)
         
     def gocmd(self):
-        widget.setCurrentIndex(1)
+        GUI.widget.setCurrentIndex(1)
 
 class ControlUI(QMainWindow, ctrlUi):
     def __init__(self):
@@ -44,17 +44,17 @@ class ControlUI(QMainWindow, ctrlUi):
         self.stackedWidget.show()
 
     def runfec(self):
-        status.display("FETCHING...")
+        GUI.status.display("FETCHING...")
         self.comboBox_4
         self.comboBox_5
 
     def rundel(self):
-        status.display("DELIVERING...")
+        GUI.status.display("DELIVERING...")
         self.comboBox_6
         self.comboBox_7
 
     def runret(self):
-        status.display("RETRIEVING...")
+        GUI.status.display("RETRIEVING...")
         self.comboBox_8
         self.comboBox_9
 
@@ -63,7 +63,7 @@ class StatusUI(QMainWindow, statUi):
         super(StatusUI,self).__init__()
         self.setupUi(self)
     def display(self, text):
-        widget.setCurrentIndex(2)
+        GUI.widget.setCurrentIndex(2)
         self.label_2.setText(text)
 
 class PasswordUI(QMainWindow, passUi):
@@ -105,26 +105,29 @@ class PasswordUI(QMainWindow, passUi):
         newText = self.label_3.text()[:-1]
         self.label_3.setText(newText)
 
+class GUI():
+    app=QApplication(sys.argv)
+    widget=QtWidgets.QStackedWidget()
+
+    main=MainUI()
+    control = ControlUI()
+    status = StatusUI()
+    password =PasswordUI()
 
 
-app=QApplication(sys.argv)
+    widget.addWidget(main)
+    widget.addWidget(control)
+    widget.addWidget(status)
+    widget.addWidget(password)
 
-main=MainUI()
-control = ControlUI()
-status = StatusUI()
-password =PasswordUI()
-
-widget=QtWidgets.QStackedWidget()
-widget.addWidget(main)
-widget.addWidget(control)
-widget.addWidget(status)
-widget.addWidget(password)
-
-widget.setFixedHeight(600)
-widget.setFixedWidth(800)
-
-widget.show()
+    widget.setFixedHeight(600)
+    widget.setFixedWidth(800)
+    
+def main():
+    GUI.widget.show()
+    
+    sys.exit(GUI.app.exec_())
 
 
-
-sys.exit(app.exec_())
+if __name__ == "__main__":
+    main()
