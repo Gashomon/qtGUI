@@ -2,6 +2,7 @@ import sys
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow, QApplication
 from PySide6.QtUiTools import QUiLoader
+from PySide6.QtCore import QTimer
 
 from main import Ui_MainWindow as mainUi
 from control import Ui_MainWindow as ctrlUi
@@ -62,9 +63,23 @@ class StatusUI(QMainWindow, statUi):
     def __init__(self):
         super(StatusUI,self).__init__()
         self.setupUi(self)
+        self.timer = QTimer(self)
+        self.counter = 5
+
     def display(self, text):
-        GUI.widget.setCurrentIndex(2)
-        self.label_2.setText(text)
+        self.timer.timeout.connect(lambda: self.displayUpdate(text))
+        self.timer.start(1000)
+        GUI.widget.setCurrentIndex(1)
+
+    def displayUpdate(self, text):
+        if self.counter > 0:
+            GUI.widget.setCurrentIndex(2)
+            self.label_2.setText(text + " " + str(self.counter))
+            self.counter -= 1
+        else:
+            self.timer.stop()
+            self.counter = 5
+            GUI.widget.setCurrentIndex(3)
 
 class PasswordUI(QMainWindow, passUi):
 
@@ -98,6 +113,7 @@ class PasswordUI(QMainWindow, passUi):
         input = self.label_3.text()
         if input == self.passcode:
             self.label_2.setText('Success')
+            GUI.widget.setCurrentIndex(1)
         else:
             self.label_2.setText('Wrong Passcode. Try Again')
     
@@ -109,11 +125,10 @@ class GUI():
     app=QApplication(sys.argv)
     widget=QtWidgets.QStackedWidget()
 
-    main=MainUI()
+    main = MainUI()
     control = ControlUI()
     status = StatusUI()
-    password =PasswordUI()
-
+    password = PasswordUI()
 
     widget.addWidget(main)
     widget.addWidget(control)
